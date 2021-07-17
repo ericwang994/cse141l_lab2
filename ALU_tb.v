@@ -35,7 +35,7 @@ ALU uut(
   .Cout(COUT)
 );
 	 
-	 
+
 initial begin
 
 
@@ -51,14 +51,12 @@ initial begin
 	OP= 4'b0101; 		// Shift right
 	test_alu_func; 		// void function call
 	#5;
-	end
 	
 	INPUT = 400;
 	ACC = -25;
 	OP= 4'b0110; 		// Add
 	test_alu_func; 		// void function call
 	#5;
-	end
 
 	INPUT = 26;
 	ACC = 8;
@@ -66,14 +64,12 @@ initial begin
 	OP= 4'b0111; 		// Add_Carry
 	test_alu_func; 		// void function call
 	#5;
-	end
 
 	INPUT = 4;
 	ACC = 2;
 	OP= 4'b1000; 		// Sub
 	test_alu_func; 		// void function call
 	#5;
-	end
 
 	INPUT = 4;
 	ACC = 0;
@@ -81,7 +77,6 @@ initial begin
 	OP= 4'b1001; 		// Sub_Carry
 	test_alu_func; 		// void function call
 	#5;
-	end
 
 	INPUT = 4;
 	ACC = 0;
@@ -92,18 +87,19 @@ initial begin
 
 	task test_alu_func;
 		begin
-		exp_cout = 0;
+			
+			exp_cout = 0;
 		case (OP)
 			4: expected = INPUT << 1;				// Shift left
 			5: expected = {1'b0,INPUT[7:1]}; 	  	// Shift right
 			6: expected = INPUT + ACC;				// Add
 			7: begin
-				expected = INPUT + ACC;			// Add_Carry
+				expected = INPUT + ACC + CIN;			// Add_Carry
 				exp_cout = INPUT > expected;
 			end
 			8: expected = INPUT - ACC;				// Sub
 			9: begin
-				expected = INPUT - ACC;				// Sub_Carry
+				expected = INPUT - ACC - CIN;				// Sub_Carry
 				exp_cout = INPUT > expected;
 			end
 			12: expected = INPUT > ACC;			// Greater_Than

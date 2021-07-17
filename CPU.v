@@ -92,15 +92,17 @@ module CPU(Reset, Start, Clk,Ack);
 	assign RegWriteValue = LoadInst? MemReadValue : ALU_out;  // 2:1 switch into reg_file
 	
 
-ALU ALU1(
-  .InputA(InA),      	  
-  .InputB(InB),
-  .OP(Instruction[8:6]),				  
-  .Out(ALU_out),		  			
-  .Zero()
-    );
+	ALU ALU1(
+	.Input(InA),      	  
+	.Acc(InB),
+	.Op(Instr_opcode),
+	.Cin(),				  
+	.Out(ALU_out),		  			
+	.Zero(),
+	.Cout()
+	);
 	 
-	 	DataMem DM1(
+	DataMem DM1(
 		.DataAddress  (ReadA)    , 
 		.WriteEn      (MemWrite), 
 		.DataIn       (MemWriteValue), 
