@@ -24,7 +24,7 @@ module CPU(Reset, Start, Clk,Ack);
 	wire [ 9:0] PgmCtr,        // program counter
 			      PCTarg;
 	wire [ 8:0] Instruction;   // our 9-bit instruction
-	wire [ 2:0] Instr_opcode;  // out 3-bit opcode
+	wire [ 3:0] Instr_opcode;  // out 4-bit opcode
 	wire [ 7:0] ReadA, ReadB;  // reg_file outputs
 	wire [ 7:0] InA, InB, 	   // ALU operand inputs
 					ALU_out;       // ALU result

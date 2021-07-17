@@ -1,7 +1,5 @@
 `timescale 1ns/ 1ps
 
-
-
 //Test bench
 //Arithmetic Logic Unit
 /*
@@ -15,62 +13,108 @@
 * even: is the output even?
 */
 
-
 module ALU_tb;
 reg [ 7:0] INPUT;     	  // data inputs
-reg [ 7:0] Acc;
-reg [ 2:0] op;		// ALU opcode, part of microcode
+reg [ 7:0] ACC;
+reg [ 3:0] OP;		// ALU opcode, part of microcode
+reg CIN;
 wire[ 7:0] OUT;		  
-
-  wire Zero;    
- 
- reg [ 7:0] expected;
+wire ZERO;    
+wire COUT;
+reg [ 7:0] expected;
+reg exp_cout;
  
 // CONNECTION
 ALU uut(
-  .InputA(INPUTA),      	  
-  .InputB(INPUTB),
-  .OP(op),				  
+  .Input(INPUT),      	  
+  .Acc(ACC),
+  .Op(OP),
+  .Cin(CIN),				  
   .Out(OUT),		  			
-  .Zero(Zero)
-    );
+  .Zero(ZERO),
+  .Cout(COUT)
+);
 	 
 initial begin
 
 
-	INPUTA = 1;
-	INPUTB = 1; 
-	op= 'b01; // AND
-	test_alu_func; // void function call
+	INPUT = 1;
+	ACC = 100; 
+	OP= 4'b0100; 		// Shift left
+	test_alu_func; 		// void function call
 	#5;
 	
 	
-	INPUTA = 4;
-	INPUTB = 1;
-	op= 'b101; // ADD
-	test_alu_func; // void function call
+	INPUT = 4;
+	ACC = 42;
+	OP= 4'b0101; 		// Shift right
+	test_alu_func; 		// void function call
 	#5;
 	end
 	
+	INPUT = 400;
+	ACC = -25;
+	OP= 4'b0110; 		// Add
+	test_alu_func; 		// void function call
+	#5;
+	end
+
+	INPUT = 26;
+	ACC = 8;
+	CIN = 1;
+	OP= 4'b0111; 		// Add_Carry
+	test_alu_func; 		// void function call
+	#5;
+	end
+
+	INPUT = 4;
+	ACC = 2;
+	OP= 4'b1000; 		// Sub
+	test_alu_func; 		// void function call
+	#5;
+	end
+
+	INPUT = 4;
+	ACC = 0;
+	CIN = 1;
+	OP= 4'b1001; 		// Sub_Carry
+	test_alu_func; 		// void function call
+	#5;
+	end
+
+	INPUT = 4;
+	ACC = 0;
+	OP= 4'b1100; 		// Greater_Than
+	test_alu_func; 		// void function call
+	#5;
+	end
+
 	task test_alu_func;
-	begin
-	  case (op)
-		0: expected = INPUTA + INPUTB;
-		1: expected = INPUTA & INPUTB;
-		2: expected = INPUTA | INPUTB;
-		3: expected = INPUTA ^ INPUTB;
-		4: expected = INPUTA << 1;				// Shift left
-		5: expected = {1'b0,INPUTA[7:1]};   // Shift right
-	  endcase
-	  #1; if(expected == OUT)
 		begin
-			$display("%t YAY!! inputs = %h %h, opcode = %b, Zero %b",$time, INPUTA,INPUTB,op, Zero);
+		exp_cout = 0;
+		case (OP)
+			4: expected = INPUT << 1;				// Shift left
+			5: expected = {1'b0,INPUT[7:1]}; 	  	// Shift right
+			6: expected = INPUT + ACC;				// Add
+			7: begin
+				expected = INPUT + ACC;			// Add_Carry
+				exp_cout = INPUT > expected;
+			end
+			8: expected = INPUT - ACC;				// Sub
+			9: begin
+				expected = INPUT - ACC;				// Sub_Carry
+				exp_cout = INPUT > expected;
+			end
+			12: expected = INPUT > ACC;			// Greater_Than
+		endcase
+		#1; if(expected == OUT && exp_cout == COUT)
+			begin
+				$display("%t YAY!! inputs = %h %h, opcode = %b, Zero %b",$time, INPUT,ACC,OP, ZERO);
+			end
+			else begin 
+				$display("%t FAIL! inputs = %h %h, opcode = %b, Zero %b",$time, INPUT,ACC,OP, ZERO);
+			end	
 		end
-	    else begin $display("%t FAIL! inputs = %h %h, opcode = %b, zero %b",$time, INPUTA,INPUTB,op, Zero);end
-		
-	end
 	endtask
-
-
 
 endmodule
