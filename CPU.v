@@ -38,6 +38,7 @@ module CPU(Reset, Start, Clk,Ack);
 					BranchEn;	   // to program counter: branch enable
 	reg  [15:0] CycleCt;	      // standalone; NOT PC!
 
+
 	// Fetch = Program Counter + Instruction ROM
 	// Program Counter
   InstFetch IF1 (
