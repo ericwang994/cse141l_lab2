@@ -5,11 +5,11 @@
 //Test bench
 //Arithmetic Logic Unit
 /*
-* INPUT: A, B
-* op: 00, A PLUS B
-* op: 01, A AND B
-* op: 10, A OR B
-* op: 11, A XOR B
+* INPUT: A, Acc, Cin
+* op: 0000, A PLUS B
+* op: 0001, A AND B
+* op: 0010, A OR B
+* op: 0011, A XOR B
 * OUTPUT A op B
 * equal: is A == B?
 * even: is the output even?
@@ -17,8 +17,8 @@
 
 
 module ALU_tb;
-reg [ 7:0] INPUTA;     	  // data inputs
-reg [ 7:0] INPUTB;
+reg [ 7:0] INPUT;     	  // data inputs
+reg [ 7:0] Acc;
 reg [ 2:0] op;		// ALU opcode, part of microcode
 wire[ 7:0] OUT;		  
 
