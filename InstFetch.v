@@ -18,7 +18,7 @@ module InstFetch(Reset,Start,Clk,BranchAbs,BranchRelEn,ALU_flag,Target,ProgCtr);
   
   
   //// program counter can clear to 0, increment, or jump
-	always
+	always @(posedge Clk)
 	begin 
 		if(Reset)
 		  ProgCtr <= 0;				        // for first program; want different value for 2nd or 3rd

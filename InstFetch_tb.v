@@ -79,7 +79,10 @@ initial begin
     #5;
 
     ALU_FLAG = 1;
-
+    test_fetch_func;
+    #5;
+    end;
+    $stop
     task test_fetch_func;
 		begin	
             if(RESET)
@@ -89,7 +92,7 @@ initial begin
             else if(BRANCHABS)	                // unconditional absolute jump
                 expected = TARGET;
             else if(BRANCHRELEN && ALU_FLAG)    // conditional relative jump
-                expected = TARGET + ProgCtr;
+                expected = TARGET + expected;
             else
                 expected = TARGET+'b1; 	        // default increment (no need for ARM/MIPS +4 -- why?)
 		#1; if(expected == PROGCTR)
@@ -101,6 +104,6 @@ initial begin
 			end	
 		end
 	endtask
-
-    always #10 CLK=~CLK;
+end
+always #10 CLK=~CLK;
 endmodule
