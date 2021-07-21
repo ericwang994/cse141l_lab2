@@ -13,7 +13,7 @@ wire[ 9:0] PROGCTR;
 
 reg [ 9:0] expected;
 
-
+always #10 CLK=~CLK;
 
 // CONNECTION
 InstFetch test_if(
@@ -28,6 +28,8 @@ InstFetch test_if(
 );
 
 initial begin
+    CLK = 0;
+    
     // reset test
     RESET = 1;
     START = 1;
@@ -35,8 +37,8 @@ initial begin
     BRANCHRELEN = 1;
     ALU_FLAG = 1;
     TARGET = 9'h1FF;
+    #9;
     test_fetch_func;
-    #5;
     
     // start test
     RESET = 0;
@@ -45,8 +47,8 @@ initial begin
     BRANCHRELEN = 1;
     ALU_FLAG = 1;
     TARGET = 9'h1FF;
+    #9;
     test_fetch_func;
-    #5;
 
     // increment test
     RESET = 0;
@@ -55,8 +57,8 @@ initial begin
     BRANCHRELEN = 0;
     ALU_FLAG = 0;
     TARGET = 9'h1FF;
+    #9;
     test_fetch_func;
-    #5;
 
     // branch absolute test
     RESET = 0;
@@ -65,8 +67,8 @@ initial begin
     BRANCHRELEN = 1;
     ALU_FLAG = 1;
     TARGET = 9'h011;
+    #9;
     test_fetch_func;
-    #5;
 
     // branch relative test
     RESET = 0;
@@ -75,13 +77,13 @@ initial begin
     BRANCHRELEN = 1;
     ALU_FLAG = 0;
     TARGET = 9'h011;
+    #9;
     test_fetch_func;
-    #5;
 
     ALU_FLAG = 1;
+    #9;
     test_fetch_func;
-    #5;
-    end;
+    end
     $stop
     task test_fetch_func;
 		begin	
@@ -104,6 +106,4 @@ initial begin
 			end	
 		end
 	endtask
-end
-always #10 CLK=~CLK;
 endmodule
