@@ -13,7 +13,7 @@ wire[ 9:0] PROGCTR;
 
 reg [ 9:0] expected;
 
-always #10 CLK=~CLK;
+always #5 CLK=~CLK;
 
 // CONNECTION
 InstFetch test_if(
@@ -83,12 +83,12 @@ initial begin
     ALU_FLAG = 1;
     #9;
     test_fetch_func;
+    $stop;
     end
-    $stop
     task test_fetch_func;
 		begin	
             if(RESET)
-                expected = 0;				        // for first program; want different value for 2nd or 3rd
+                expected = 0;				        // for reseting
             else if(START)						// hold while start asserted; commence when released
                 expected = expected;
             else if(BRANCHABS)	                // unconditional absolute jump
@@ -96,7 +96,7 @@ initial begin
             else if(BRANCHRELEN && ALU_FLAG)    // conditional relative jump
                 expected = TARGET + expected;
             else
-                expected = TARGET+'b1; 	        // default increment (no need for ARM/MIPS +4 -- why?)
+                expected = expected+9'h001; 	        // default increment (no need for ARM/MIPS +4 -- why?)
 		#1; if(expected == PROGCTR)
 			begin
 				$display("%t YAY!! FLAGS = R:%b S:%b Ba:%b Br:%b A:%b, Target = %b, ProgCtr = %b, expected = %b",$time, RESET,START,BRANCHABS,BRANCHRELEN,ALU_FLAG, TARGET, PROGCTR, expected);
