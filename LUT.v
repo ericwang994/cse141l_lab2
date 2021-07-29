@@ -4,9 +4,8 @@
 // Lookup table acts like a function: here Target = f(Addr);
 //  in general, Output = f(Input); 
 module LUT(Addr, Target);
-  
-    input       [ 1:0] Addr;
-  output reg[ 9:0] Target;
+  input       [ 1:0] Addr;
+  output reg    [ 9:0] Target;
 
 always @*
   case(Addr)		   //-16'd30;

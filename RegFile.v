@@ -6,16 +6,16 @@
 /* parameters are compile time directives 
        this can be an any-size reg_file: just override the params!
 */
-module RegFile (Clk,WriteEn,RaddrA,RaddrB,Waddr,DataIn,DataOutA,DataOutB);
+module RegFile (Clk,WriteEn,RaddrA,RaddrAcc,Waddr,DataIn,DataOutA,DataOutAcc);
 	parameter W=8, D=4;// W = data path width; D = pointer width
   input                Clk,
                        WriteEn;
   input        [D-1:0] RaddrA,				  // address pointers
-                       RaddrB,
+                       RaddrAcc,
                        Waddr;
   input        [W-1:0] DataIn;
   output reg      [W-1:0] DataOutA;			  // showing two different ways to handle DataOutX, for
-  output reg [W-1:0] DataOutB;				  //   pedagogic reasons only;
+  output reg [W-1:0] DataOutAcc;				  //   pedagogic reasons only;
 
 // W bits wide [W-1:0] and 2**4 registers deep 	 
 reg [W-1:0] Registers[(2**D)-1:0];	  // or just registers[16] if we know D=4 always
@@ -29,12 +29,16 @@ reg [W-1:0] Registers[(2**D)-1:0];	  // or just registers[16] if we know D=4 alw
 always@*
 begin
  DataOutA = Registers[RaddrA];	  
- DataOutB = Registers[RaddrB];    
+ DataOutAcc = Registers[RaddrAcc];  
+ Cin = Registers[14]            // carry register
 end
 
 // sequential (clocked) writes 
 always @ (posedge Clk)
-  if (WriteEn)	                             // works just like data_memory writes
+  if (WriteEn) begin	                             // works just like data_memory writes
     Registers[Waddr] <= DataIn;
+    Registers[0] <= '0;
+    Registers[14] <= Cout;      // carry register
+  end
 
 endmodule

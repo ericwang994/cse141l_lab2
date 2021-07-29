@@ -5,13 +5,13 @@
 
 
 	 
-module InstFetch(Reset,Start,Clk,BranchAbs,BranchRelEn,ALU_flag,Target,ProgCtr);
+module InstFetch(Reset,Start,Clk,BranchEqual,BranchTrue,ALU_flag,Target,ProgCtr);
 
   input              Reset,			   	// reset, init, etc. -- force PC to 0 
                      Start,			   	// begin next program in series
                      Clk,			   	// PC can change on pos. edges only
-                     BranchAbs,	       	// jump unconditionally to Target value	   
-                     BranchRelEn,	   	// jump conditionally to Target + PC
+                     BranchEqual,	       	// jump unconditionally to Target value	   
+                     BranchTrue,	   	// jump conditionally to Target + PC
                      ALU_flag;		  	// flag from ALU, e.g. Zero, Carry, Overflow, Negative (from ARM)
   input       [9:0] Target;		   		// jump ... "how high?"
   output reg[9:0] ProgCtr ;          	// the program counter register itself
@@ -24,12 +24,12 @@ module InstFetch(Reset,Start,Clk,BranchAbs,BranchRelEn,ALU_flag,Target,ProgCtr);
 		  ProgCtr <= 0;				        // for first program; want different value for 2nd or 3rd
 		else if(Start)						// hold while start asserted; commence when released
 		  ProgCtr <= ProgCtr;
-		else if(BranchAbs)	                // unconditional absolute jump
-		  ProgCtr <= Target;
-		else if(BranchRelEn && ALU_flag)    // conditional relative jump
+		else if(BranchEqual && ALU_flag)	                // unconditional absolute jump
+		  ProgCtr <= Target + ProgCtr;
+		else if(BranchTrue && !ALU_flag)    // conditional relative jump
 		  ProgCtr <= Target + ProgCtr;
 		else
-		  ProgCtr <= ProgCtr+'b1; 	        // default increment (no need for ARM/MIPS +4 -- why?)
+		  ProgCtr <= ProgCtr+'b1; 	        // default increment (no need for ARM/MIPS +4 -- why?) A: indexed with inst_rom var in InstROM.v
 	end
 
 

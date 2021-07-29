@@ -22,7 +22,7 @@ module CPU(Reset, Start, Clk,Ack);
 	
 	
 	wire [ 9:0] PgmCtr,        		// program counter
-			      PCTarg;
+			    PCTarg;
 	wire [ 8:0] Instruction;   		// our 9-bit instruction
 	wire [ 3:0] Instr_opcode;  		// out 4-bit opcode
 	wire [ 7:0] ReadA, ReadAcc;  	// reg_file outputs
@@ -32,31 +32,31 @@ module CPU(Reset, Start, Clk,Ack);
 					MemWriteValue, 	// data in to data_memory
 					MemReadValue;  	// data out from data_memory
 	wire        MemWrite,	   		// data_memory write enable
-					RegWrEn,	    	// reg_file write enable
-					Zero,		    	// ALU output = 0 flag
-					Jump,	        	// to program counter: jump 
-					BranchEn;	   		// to program counter: branch enable
+					RegWrEn,	    // reg_file write enable
+					Zero,		    // ALU output = 0 flag
+					BeqEn,	       	// to program counter: beq enable
+					BtrEn;	   		// to program counter: btr enable
 	reg  [15:0] CycleCt;	      	// standalone; NOT PC!
 
 
 	// Fetch = Program Counter + Instruction ROM
 	// Program Counter
   	InstFetch IF1 (
-		.Reset       (Reset   ) , 
-		.Start       (Start   ) ,  // SystemVerilg shorthand for .halt(halt), 
-		.Clk         (Clk     ) ,  // (Clk) is required in Verilog, optional in SystemVerilog
-		.BranchAbs   (Jump    ) ,  // jump enable
-		.BranchRelEn (BranchEn) ,  // branch enable
-		.ALU_flag	 (Zero    ) ,
-		.Target      (PCTarg  ) ,
-		.ProgCtr     (PgmCtr  )	   // program count = index to instruction memory
+		.Reset       (Reset		), 
+		.Start       (Start		),		// SystemVerilg shorthand for .halt(halt), 
+		.Clk         (Clk		),		// (Clk) is required in Verilog, optional in SystemVerilog
+		.BranchEqual (BeqEn		),		// beq enable
+		.BranchTrue	 (BtrEn		),		// btr enable
+		.ALU_flag	 (Zero		),		// Zero flag for branching
+		.Target      (PCTarg	),		// desired branch vector
+		.ProgCtr     (PgmCtr	)		// program count = index to instruction memory
 	);	
 
 	// Control decoder
 	Ctrl Ctrl1 (
-		.Instruction  (Instruction),     // from instr_ROM
-		.Jump         (Jump),		     // to PC
-		.BranchEn     (BranchEn)		 // to PC
+		.Instruction	(Instruction),		// from instr_ROM
+		.BeqEn			(BeqEn),			// to PC
+		.BtrEn			(BtrEn)				// to PC
 	);
 	
 	// instruction ROM
@@ -65,7 +65,7 @@ module CPU(Reset, Start, Clk,Ack);
 		.InstOut       (Instruction)
 	);
 	
-	assign LoadInst = Instruction[7:4]==4'b0010;  // calls load specially
+	assign LoadInst = Instruction[7:4] == 4'b0010;  // calls load specially
 	
 	always@*							  // assign Zero = !Out;
 	begin
@@ -75,14 +75,14 @@ module CPU(Reset, Start, Clk,Ack);
 	//Reg file
 	// Modify D = *Number of bits you use for each register*
 	RegFile #(.W(8),.D(4)) RF1 (
-		.Clk       (Clk),
-		.WriteEn   (RegWrEn), 
-		.RaddrA    (Instruction[3:0]),      
-		.RaddrB    (4'hF), 
-		.Waddr     (4'hF), 	       			// mux above
-		.DataIn    (RegWriteValue), 
-		.DataOutA  (ReadA), 
-		.DataOutB  (ReadAcc)
+		.Clk       	(Clk),
+		.WriteEn   	(RegWrEn), 
+		.RaddrA    	(Instruction[3:0]),      
+		.RaddrAcc   (4'hF), 
+		.Waddr     	(4'hF), 	       			// hardcoded register 15 as accumulator
+		.DataIn    	(RegWriteValue), 
+		.DataOutA  	(ReadA), 
+		.DataOutAcc	(ReadAcc)
 	);
 	
 	
@@ -100,7 +100,7 @@ module CPU(Reset, Start, Clk,Ack);
 		.Op(Instr_opcode),
 		.Cin(),				  
 		.Out(ALU_out),		  			
-		.Zero(),
+		.Zero(Zero),
 		.Cout()
 	);
 	 
@@ -109,7 +109,7 @@ module CPU(Reset, Start, Clk,Ack);
 		.WriteEn      (MemWrite), 
 		.DataIn       (MemWriteValue), 
 		.DataOut      (MemReadValue)  , 
-		.Clk 		  	(Clk)     ,
+		.Clk 		  (Clk)     ,
 		.Reset		  (Reset)
 	);
 
