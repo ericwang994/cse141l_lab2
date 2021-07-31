@@ -24,9 +24,9 @@ module InstFetch(Reset,Start,Clk,BranchEqual,BranchTrue,ALU_flag,Target,ProgCtr)
 		  ProgCtr <= 0;				        // for first program; want different value for 2nd or 3rd
 		else if(Start)						// hold while start asserted; commence when released
 		  ProgCtr <= ProgCtr;
-		else if(BranchEqual && ALU_flag)	                // unconditional absolute jump
+		else if(BranchEqual && ALU_flag)	// jump if equal(ALU == 0)
 		  ProgCtr <= Target + ProgCtr;
-		else if(BranchTrue && !ALU_flag)    // conditional relative jump
+		else if(BranchTrue && !ALU_flag)    // jump if true(ALU != 0)
 		  ProgCtr <= Target + ProgCtr;
 		else
 		  ProgCtr <= ProgCtr+'b1; 	        // default increment (no need for ARM/MIPS +4 -- why?) A: indexed with inst_rom var in InstROM.v

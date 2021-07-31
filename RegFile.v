@@ -12,11 +12,13 @@ module RegFile (Clk,WriteEn,RaddrA,RaddrAcc,Waddr,DataIn,DataOutA,DataOutAcc);
                        WriteEn;
   input        [D-1:0] RaddrA,				  // address pointers
                        RaddrAcc,
+                       RaddrC,
                        Waddr;
   input        [W-1:0] DataIn;
+  input                DataC;
   output reg      [W-1:0] DataOutA;			  // showing two different ways to handle DataOutX, for
   output reg [W-1:0] DataOutAcc;				  //   pedagogic reasons only;
-
+  output reg           DataOutC;
 // W bits wide [W-1:0] and 2**4 registers deep 	 
 reg [W-1:0] Registers[(2**D)-1:0];	  // or just registers[16] if we know D=4 always
 
@@ -30,7 +32,7 @@ always@*
 begin
  DataOutA = Registers[RaddrA];	  
  DataOutAcc = Registers[RaddrAcc];  
- Cin = Registers[14]            // carry register
+ DataOutC = Registers[14]            // carry register
 end
 
 // sequential (clocked) writes 
@@ -38,7 +40,7 @@ always @ (posedge Clk)
   if (WriteEn) begin	                             // works just like data_memory writes
     Registers[Waddr] <= DataIn;
     Registers[0] <= '0;
-    Registers[14] <= Cout;      // carry register
+    Registers[14] <= DataC;      // carry register
   end
 
 endmodule

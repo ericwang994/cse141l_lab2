@@ -20,6 +20,8 @@ module ALU(Input,Acc,Op,Cin,Out,Zero,Cout);
 		Out = 0;
 		Cout = 0;
 		case (Op)
+		4'b0000: Out = Input;				// load
+		4'b0001: Out = Acc;					// mov
 		4'b0100: Out = Input << 1;			// Shift left
 		4'b0101: Out = {1'b0,Input[7:1]}; 	// Shift right
 		4'b0110: Out = Input + Acc; 		// ADD
@@ -32,8 +34,11 @@ module ALU(Input,Acc,Op,Cin,Out,Zero,Cout);
 			Out = Input - Acc - Cin; 		// SUB_CARRY
 			Cout = Input > Out;
 		end
+		4'b1010: Out = Acc;					// branch equal
+		4'b1011: Out = Acc; 				// branch true
 		4'b1100: Out = Acc < Input; 		// Greater Than
-			
+		4'b1101: Out = Input[0];			// Fbit
+		4'b1110: Out = Input[7];			// Lbit
 		default: Out = 0;
 	  	endcase
 	end 
