@@ -25,7 +25,9 @@ module CPU(Reset, Start, Clk,Ack);
 	wire [ 3:0] Instr_opcode;  		// out 4-bit opcode
 	wire [ 7:0] ReadA, ReadAcc,
 				ReadC;  			// reg_file outputs
-	wire [ 7:0] InA, InAcc, InC	  	// ALU operand inputs
+	wire [ 3:0] Waddr;
+	wire [ 7:0] Maddr;
+	wire [ 7:0] InA, InAcc, InC,	  	// ALU operand inputs
 					ALU_out;       	// ALU result
 	wire [ 7:0] RegWriteValue, 		// data in to reg file
 				RegCarryValue,		// data to update carry register
@@ -34,7 +36,7 @@ module CPU(Reset, Start, Clk,Ack);
 	wire        MemWrite,	   		// data_memory write enable
 				RegWrEn,	    	// reg_file write enable
 				CrEn,				// create instruction enable
-				MovPullEn,			// writing to register other than accumulator enable
+				MovEn,			// writing to register other than accumulator enable
 				PullEn,				// writing back to register a memory value or ALU result
 				Zero,		    	// ALU output = 0 flag
 				BeqEn,	       		// to program counter: beq enable
@@ -61,7 +63,7 @@ module CPU(Reset, Start, Clk,Ack);
 		.MemWrite		(MemWrite),			//control flags
 		.RegWrEn		(RegWrEn),
 		.CrEn			(CrEn),
-		.MovPullEn		(MovPullEn),
+		.MovEn			(MovEn),
 		.PullEn			(PullEn),
 		.BeqEn			(BeqEn),			
 		.BtrEn			(BtrEn)				
@@ -78,7 +80,7 @@ module CPU(Reset, Start, Clk,Ack);
 		Ack = (Instruction[7:4] == 4'b1111);
 	end
 	
-	assign Waddr = MovPullEn? Instruction[3:0] : 4'hF;
+	assign Waddr = MovEn? Instruction[3:0] : 4'hF;
 	
 	//Reg file
 	// Modify D = *Number of bits you use for each register*
@@ -96,6 +98,7 @@ module CPU(Reset, Start, Clk,Ack);
 		.DataOutC	(ReadC)
 	);
 	
+	assign PCTarg = ReadA[7]? {2'b11,ReadA} : {2'b00,ReadA};
 	
 	
 	assign InA = ReadA;						          // connect RF out to ALU in
@@ -104,7 +107,7 @@ module CPU(Reset, Start, Clk,Ack);
 	assign Instr_opcode = Instruction[7:4];
 	//assign MemWrite = (Instruction[7:4] == 4'b0011);       // mem_store command
 	assign RegWriteValue = CrEn? Instruction[7:0] : (PullEn? MemReadValue : ALU_out);  
-	
+	assign Maddr = PullEn? ReadA : ReadAcc;
 
 	ALU ALU1(
 		.Input(InA),      	  
@@ -117,7 +120,7 @@ module CPU(Reset, Start, Clk,Ack);
 	);
 	 
 	DataMem DM1(
-		.DataAddress  (ReadAcc), 
+		.DataAddress  (Maddr), 
 		.WriteEn      (MemWrite), 
 		.DataIn       (ReadA), 
 		.DataOut      (MemReadValue), 

@@ -73,7 +73,6 @@ initial begin
         $display("OOPS! expected %h, got %h", real_result, result);
 //
    #20 reset = 1;
-   #20 reset = 0;
    #20 start = 1;
    dividend = 16'd385; 
    divisor =  8'd6;

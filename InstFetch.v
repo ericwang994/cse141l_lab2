@@ -1,10 +1,6 @@
 // Module Name:    InstFetch 
 // Project Name:   CSE141L
-//
-
-
-
-	 
+// 
 module InstFetch(Reset,Start,Clk,BranchEqual,BranchTrue,ALU_flag,Target,ProgCtr);
 
   input              Reset,			   	// reset, init, etc. -- force PC to 0 
@@ -14,7 +10,7 @@ module InstFetch(Reset,Start,Clk,BranchEqual,BranchTrue,ALU_flag,Target,ProgCtr)
                      BranchTrue,	   	// jump conditionally to Target + PC
                      ALU_flag;		  	// flag from ALU, e.g. Zero, Carry, Overflow, Negative (from ARM)
   input       [9:0] Target;		   		// jump ... "how high?"
-  output reg[9:0] ProgCtr ;          	// the program counter register itself
+  output reg[9:0] ProgCtr;          	// the program counter register itself
   
   
   //// program counter can clear to 0, increment, or jump

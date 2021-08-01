@@ -10,10 +10,10 @@ module ALU(Input,Acc,Op,Cin,Out,Zero,Cout);
 	input [ 7:0] Input; 	// reg value or imm value
 	input [ 7:0] Acc;	// accumulator reg value
 	input [ 3:0] Op;	 	// operation bits
-	input Cin;		 	 	// implicit carry reg value
+	input [ 7:0] Cin;		 	 	// implicit carry reg value
 	output reg [7:0] Out; 	// logic in SystemVerilog
 	output reg Zero;		
-	output reg Cout;
+	output reg [7:0] Cout;
 
 	always@* // always_comb in systemverilog
 	begin 
@@ -22,8 +22,8 @@ module ALU(Input,Acc,Op,Cin,Out,Zero,Cout);
 		case (Op)
 		4'b0000: Out = Input;				// load
 		4'b0001: Out = Acc;					// mov
-		4'b0100: Out = Input << 1;			// Shift left
-		4'b0101: Out = {1'b0,Input[7:1]}; 	// Shift right
+		4'b0100: Out = Acc << 1;			// Shift left
+		4'b0101: Out = {1'b0,Acc[7:1]}; 	// Shift right
 		4'b0110: Out = Input + Acc; 		// ADD
 		4'b0111: begin
 			Out = Input + Acc + Cin; 		// ADD_CARRY
