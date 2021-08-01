@@ -4,7 +4,7 @@
 //  reads and verifies result from CPU against its own computation
 `timescale 1ns/1ps
 
-module test_bench_1;
+module unit_testbench;
 
 reg reset,  // Reset signal  
     clk,    // system clock runs testbench and CPU
@@ -50,8 +50,8 @@ initial begin
     #40 start = 0;
     #20 wait(done);
 
-    result = 1;
-    acc = dut.RF1.Registers[15];
+    result = 0;
+    acc = dut.RF1.Registers[1];
     carry = dut.RF1.Registers[14];
     $display ("Accumulator = %h", acc);
 

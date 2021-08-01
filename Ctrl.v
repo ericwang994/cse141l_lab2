@@ -87,7 +87,7 @@ begin
       RegWrEn = 1;
     end 
     else if(Instruction[7:4] ==  4'b0111) begin     // add carry
-      MovEn = 0;
+      MovEn = 1;
       PullEn = 0;
       CrEn = 0;
       BeqEn = 0;
@@ -105,7 +105,7 @@ begin
       RegWrEn = 1;
     end 
     else if(Instruction[7:4] ==  4'b1001) begin     // sub carry
-      MovEn = 0;
+      MovEn = 1;
       PullEn = 0;
       CrEn = 0;
       BeqEn = 0;

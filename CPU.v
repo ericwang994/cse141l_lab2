@@ -77,7 +77,7 @@ module CPU(Reset, Start, Clk,Ack);
 	
 	always@*							  // assign Zero = !Out;
 	begin
-		Ack = (Instruction[7:4] == 4'b1111);
+		Ack = (Instruction[8:4] == 5'b01111);
 	end
 	
 	assign Waddr = MovEn? Instruction[3:0] : 4'hF;
