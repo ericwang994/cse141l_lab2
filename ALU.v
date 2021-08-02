@@ -27,7 +27,7 @@ module ALU(Input,Acc,Op,Cin,Out,Zero,Cout);
 		4'b0110: Out = Input + Acc; 		// ADD
 		4'b0111: begin
 			Out = Input + Acc + Cin; 		// ADD_CARRY
-			Cout = Input < Out;
+			Cout = Input > Out;
 		end
 		4'b1000: Out = Input - Acc; 		// SUB
 		4'b1001: begin
@@ -41,7 +41,7 @@ module ALU(Input,Acc,Op,Cin,Out,Zero,Cout);
 		end
 		4'b1101: Out = Input[0];			// Fbit
 		4'b1110: Out = Input[7];			// Lbit
-		default: Out = 0;
+		
 	  	endcase
 	end 
 

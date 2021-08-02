@@ -15,7 +15,7 @@ wire done;  // acknowledge back from CPU
 // ***** instantiate your top level design here *****
   CPU dut(
     .Clk     (clk  ),   // input: use your own port names, if different
-    .Reset   (init ),   // input: some prefer to call this ".reset"
+    .Reset   (reset),   // input: some prefer to call this ".reset"
     .Start   (start),   // input: launch program
     .Ack     (done )    // output: "program run complete"
   );
@@ -45,26 +45,27 @@ end
 initial begin
     clk = 0;
     // launch program 2 with the first input
-    start = 1;
+    #5 reset = 1; start = 1;
+    #10 reset = 0;
     N = 16'd9; 
-	numbers [1][7:0]  =   8'd0; //fraction part of input1
+	numbers [1][7:0]  =   8'd64; //fraction part of input1
 	numbers [1][15:8] =   8'd1;  //int part of input1
-	numbers [2][7:0]  =   8'd0; //fraction part of input2
+	numbers [2][7:0]  =   8'd3; //fraction part of input2
 	numbers [2][15:8] =   8'd2;  //int part of input2
-	numbers [3][7:0]  =   8'd0; //fraction part of input3
-	numbers [3][15:8] =   8'd3;  //int part of input3
-	numbers [4][7:0]  =   8'd0; //fraction part of input4
-	numbers [4][15:8] =   8'd4;  //int part of input4
-	numbers [5][7:0]  =   8'd0; //fraction part of input5
-	numbers [5][15:8] =   8'd5;  //int part of input5
-	numbers [6][7:0]  =   8'd0; //fraction part of input6
-	numbers [6][15:8] =   8'd6;  //int part of input6
-	numbers [7][7:0]  =   8'd0; //fraction part of input7
-	numbers [7][15:8] =   8'd7;  //int part of input7
-	numbers [8][7:0]  =   8'd0; //fraction part of input8
-	numbers [8][15:8] =   8'd8;  //int part of input8
-	numbers [9][7:0]  =   8'd0; //fraction part of input9
-	numbers [9][15:8] =   8'd9;  //int part of input9
+	numbers [3][7:0]  =   8'd1; //fraction part of input3
+	numbers [3][15:8] =   8'd1;  //int part of input3
+	numbers [4][7:0]  =   8'd1; //fraction part of input4
+	numbers [4][15:8] =   8'd0;  //int part of input4
+	numbers [5][7:0]  =   8'd1; //fraction part of input5
+	numbers [5][15:8] =   8'd0;  //int part of input5
+	numbers [6][7:0]  =   8'd1; //fraction part of input6
+	numbers [6][15:8] =   8'd0;  //int part of input6
+	numbers [7][7:0]  =   8'd1; //fraction part of input7
+	numbers [7][15:8] =   8'd0;  //int part of input7
+	numbers [8][7:0]  =   8'd1; //fraction part of input8
+	numbers [8][15:8] =   8'd64;  //int part of input8
+	numbers [9][7:0]  =   8'd1; //fraction part of input9
+	numbers [9][15:8] =   8'd10;  //int part of input9
 	
 	
 	avg;
@@ -91,23 +92,23 @@ initial begin
         $display("success -- match");
     else 
         $display("OOPS! expected %h, got %h", real_result, result);
-
+$stop;
 	//***** Secnod Test Case ******
-	#20 reset = 1;
-	#20 start = 1;
+	#5 reset = 1; start = 1;
+    	#10 reset = 0;
     N = 16'd6; 
 	numbers [1][7:0]  =   8'd0; //fraction part of input1
 	numbers [1][15:8] =   8'd1;  //int part of input1
 	numbers [2][7:0]  =   8'd0; //fraction part of input2
 	numbers [2][15:8] =   8'd2;  //int part of input2
-	numbers [3][7:0]  =   8'd0; //fraction part of input3
-	numbers [3][15:8] =   8'd4;  //int part of input3
-	numbers [4][7:0]  =   8'd0; //fraction part of input4
-	numbers [4][15:8] =   8'd8;  //int part of input4
+	numbers [3][7:0]  =   8'd5; //fraction part of input3
+	numbers [3][15:8] =   8'd0;  //int part of input3
+	numbers [4][7:0]  =   8'd8; //fraction part of input4
+	numbers [4][15:8] =   8'd0;  //int part of input4
 	numbers [5][7:0]  =   8'd0; //fraction part of input5
-	numbers [5][15:8] =   8'd16;  //int part of input5
-	numbers [6][7:0]  =   8'd0; //fraction part of input6
-	numbers [6][15:8] =   8'd32;  //int part of input6
+	numbers [5][15:8] =   8'd1;  //int part of input5
+	numbers [6][7:0]  =   8'd32; //fraction part of input6
+	numbers [6][15:8] =   8'd0;  //int part of input6
 
 	
 	avg;
@@ -133,10 +134,10 @@ initial begin
         $display("success -- match");
     else 
         $display("OOPS! expected %h, got %h", real_result, result);
-
+$stop;
 	//***** Third Test Case ******
-	#20 reset = 1;
-	#20 start = 1;
+	#5 reset = 1; start = 1;
+    	#10 reset = 0;
     N = 16'd4; 
 	numbers [1][7:0]  =   8'd0; //fraction part of input1
 	numbers [1][15:8] =   8'd0;  //int part of input1
@@ -172,7 +173,7 @@ initial begin
         $display("success -- match");
     else 
         $display("OOPS! expected %h, got %h", real_result, result);
-
+    $stop;
     
 end
 
@@ -198,5 +199,4 @@ end
 endtask
 
 endmodule
-
 

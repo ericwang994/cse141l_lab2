@@ -21,7 +21,7 @@ wire done;  // acknowledge back from CPU
 // ***** instantiate your top level design here *****
   CPU dut(
     .Clk     (clk  ),   // input: use your own port names, if different
-    .Reset   (init ),   // input: some prefer to call this ".reset"
+    .Reset   (reset),   // input: some prefer to call this ".reset"
     .Start   (start),   // input: launch program
     .Ack     (done )    // output: "program run complete"
   );
@@ -58,7 +58,8 @@ initial begin
     clk = 0;
     // launch program 1 with the first input
 	$display("******Program 1******");
-    start = 1;
+    #5 reset = 1; start = 1;
+    #10 reset = 0;
 	dividend = 16'd12800; 
     divisor =  8'd25;
 

@@ -44,8 +44,8 @@ initial begin
     // launch program 1 with the first input
     #5 reset = 1; start = 1;
     #10 reset = 0;
-    dividend = 16'd25; 
-    divisor =  8'd255;
+    dividend = 16'd12800; 
+    divisor =  8'd25;
 
     //calculate the correct values
     if(divisor) 
@@ -72,7 +72,7 @@ initial begin
         $display("success -- match");
     else 
         $display("OOPS! expected %h, got %h", real_result, result);
-//
+
    #5 reset = 1; start = 1;
    #10 reset = 0;
    dividend = 16'd385; 
@@ -119,4 +119,3 @@ end
 endtask
 
 endmodule
-

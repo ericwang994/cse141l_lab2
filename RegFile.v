@@ -6,9 +6,10 @@
 /* parameters are compile time directives 
        this can be an any-size reg_file: just override the params!
 */
-module RegFile (Clk,WriteEn,RaddrA,RaddrAcc,RaddrC,Waddr,DataIn,DataC,DataOutA,DataOutAcc,DataOutC);
+module RegFile (Clk,WriteEn,CEn,RaddrA,RaddrAcc,RaddrC,Waddr,DataIn,DataC,DataOutA,DataOutAcc,DataOutC);
 	parameter W=8, D=4;// W = data path width; D = pointer width
   input                Clk,
+		       CEn,
                        WriteEn;
   input        [D-1:0] RaddrA;				  // address pointers
   input        [D-1:0] RaddrAcc;
@@ -27,6 +28,9 @@ reg [W-1:0] Registers[(2**D)-1:0];	  // or just registers[16] if we know D=4 alw
     difference: assign is limited to one line of code, so
 	always_comb is much more versatile     
 */
+initial begin
+  Registers[14] <=0;
+end
 
 always@*
 begin
@@ -36,11 +40,14 @@ begin
 end
 
 // sequential (clocked) writes 
-always @ (posedge Clk)
+always @ (posedge Clk) begin
   if (WriteEn) begin	                             // works just like data_memory writes
     Registers[Waddr] <= DataIn;
     Registers[0] <= '0;
-    Registers[14] <= DataC;      // carry register
+    
   end
-
+  if(CEn) begin
+    Registers[14] <= DataC;      // carry register 
+  end
+end
 endmodule

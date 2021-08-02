@@ -2,17 +2,18 @@
 // inputs from instrROM, ALU flags
 // outputs to program_counter (fetch unit)
 
-module Ctrl (Instruction, MemWrite, RegWrEn, CrEn, MovEn, PullEn, BeqEn, BtrEn);
+module Ctrl (Instruction, MemWrite, RegWrEn, CEn, CrEn, MovEn, PullEn, BeqEn, BtrEn);
 
 
   input[ 8:0] Instruction;	   // machine code
   output reg MemWrite, 
-	     RegWrEn, CrEn, MovEn, PullEn, BeqEn,
+	     RegWrEn, CEn, CrEn, MovEn, PullEn, BeqEn,
              BtrEn;
 
 // jump on right shift that generates a zero
 always@*
 begin
+  CEn = 0;
   if(Instruction[8] == 1'b1) begin                  // create
     MovEn = 0;
     PullEn = 0;
@@ -94,6 +95,7 @@ begin
       BtrEn = 0;
       MemWrite = 0;
       RegWrEn = 1;
+      CEn = 1;
     end
     else if(Instruction[7:4] ==  4'b1000) begin     // sub
       MovEn = 0;
@@ -112,6 +114,7 @@ begin
       BtrEn = 0;
       MemWrite = 0;
       RegWrEn = 1;
+      CEn = 1;
     end 
     else if(Instruction[7:4] ==  4'b1010) begin     // branch equal
       MovEn = 0;

@@ -35,6 +35,7 @@ module CPU(Reset, Start, Clk,Ack);
 				MemReadValue;  		// data out from data_memory
 	wire        MemWrite,	   		// data_memory write enable
 				RegWrEn,	    	// reg_file write enable
+				CEn,
 				CrEn,				// create instruction enable
 				MovEn,			// writing to register other than accumulator enable
 				PullEn,				// writing back to register a memory value or ALU result
@@ -62,6 +63,7 @@ module CPU(Reset, Start, Clk,Ack);
 		.Instruction	(Instruction),		// from instr_ROM
 		.MemWrite		(MemWrite),			//control flags
 		.RegWrEn		(RegWrEn),
+		.CEn			(CEn),
 		.CrEn			(CrEn),
 		.MovEn			(MovEn),
 		.PullEn			(PullEn),
@@ -87,6 +89,7 @@ module CPU(Reset, Start, Clk,Ack);
 	RegFile #(.W(8),.D(4)) RF1 (
 		.Clk       	(Clk),
 		.WriteEn   	(RegWrEn), 
+		.CEn		(CEn),
 		.RaddrA    	(Instruction[3:0]),      
 		.RaddrAcc   (4'hF), 					// Hardcoded acc as 15
 		.RaddrC		(4'hE),						// Hardcoded carry as 14

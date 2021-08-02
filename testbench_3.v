@@ -15,7 +15,7 @@ wire done;  // acknowledge back from CPU
 // ***** instantiate your top level design here *****
   CPU dut(
     .Clk     (clk  ),   // input: use your own port names, if different
-    .Reset   (init ),   // input: some prefer to call this ".reset"
+    .Reset   (reset),   // input: some prefer to call this ".reset"
     .Start   (start),   // input: launch program
     .Ack     (done )    // output: "program run complete"
   );
@@ -50,7 +50,8 @@ end
 initial begin
     clk = 0;
     // launch program 1 with the first input
-    start = 1;
+    #5 reset = 1; start = 1;
+    #10 reset = 0;
     N = 16'd3; 
 	Xnumbers [1]  =  8'd1;
 	Xnumbers [2]  =  8'd2;
@@ -84,10 +85,10 @@ initial begin
         $display("success -- match");
     else 
         $display("OOPS! expected %h, got %h", real_result, result);
-
+$stop;
 	//***** Secnod Test Case ******
-	#20 reset = 1;
-	#20 start = 1;
+	#5 reset = 1; start = 1;
+    #10 reset = 0;
     	N = 16'd4; 
 	Xnumbers [1]  =  8'd2;
 	Xnumbers [2]  =  8'd4;
@@ -123,7 +124,7 @@ initial begin
         $display("success -- match");
     else 
         $display("OOPS! expected %h, got %h", real_result, result);
-	
+$stop;	
 
     
 end
