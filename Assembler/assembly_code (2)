@@ -1,0 +1,78 @@
+load $r0
+mov $r5		#i
+mov $r1		#int2 / r2
+mov $r2		#int1 / r1
+mov $r7		#frac / r0
+create #0xE8		# -24
+mov $r9
+create #0x13		# 19
+mov $r8
+pull $r0			#sum & get N
+mov $r3		#put N in r3 for divide’s “b”
+sl $r0			#getting 2*N
+mov $r6		#storing 2*N
+load $r5
+sub $r6		#acc = 2*N - i
+beq $r8		#branch when i incremented all the way to N
+load $r0
+addc $r0		#refreshing carry_reg
+create #0x02
+add $r5
+mov $r5		#increment i 
+pull $r5			#get frac of i-th number
+addc $r7		#add to frac sum
+create #0xFF		# -1
+add $r5
+mov $r5		#decrement to get int part
+pull $r5			#mem[1] int acc
+addc $r2		#add to int sum(r1)
+load $r0
+addc $r1		#add carry to int2 sum(r2)
+create #0x01
+add $r5
+mov $r5		#reset i to end of i-th number
+btr $r9			#always branch since i>0 by now
+load $r0		#divide 
+mov $r4 		#q0
+mov $r5 		#q1
+mov $r6 		#q2
+mov $r8 		#holds comparison
+create #0xE7		# -25
+mov $r9
+load $r0		#loop
+addc $r0		#refresh the carry_reg
+create #0x01 	
+addc $r4 		#adds 1 to q0
+load $r0
+addc $r5 		#adds carry to q1
+addc $r6 		#adds carry to q2
+load $r0
+addc $r0		#refresh carry_reg
+load $r3		
+subc $r7		#r0 - b
+create #0x00 			
+subc $r2 		#subs carry from r1
+subc $r1 		#subs carry from r2
+create #0x00 	
+gt $r2			#check if r2 >0
+mov $r8		#stores comparison result
+create #0x00
+gt $r1			#check if r1 >0
+add $r8		#accumulates comparison result
+mov $r8
+create #0xFF		#get -1 value
+add $r3		#get r3 - 1 value
+gt $r7			#check if r7 >= r3
+add $r8		#accumulates comparison result
+btr $r9			#branch if any gt yielded true(1)
+pull $r0
+sl $r0
+mov $r1
+create #0x01
+add $r1
+mov $r1
+store $r5		#stores int byte 1(mem[2*N+1])
+create #0x01
+add $r1	
+store $r4		#stores frac(mem[2*N+2])
+halt 

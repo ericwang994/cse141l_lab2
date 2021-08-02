@@ -1,0 +1,51 @@
+pull $r0			#gets the mem[0] byte 
+mov $r1		#stores mem[0] in r1 “a1/r2”
+create #0x01
+mov $r2		#puts value “1” in r2
+pull $r2			#uses r2 value as mem addr to get mem[1]
+mov $r2		#gets the mem[1] byte and stores it in r2 “a0/r1”
+create #0x02
+mov $r3		#puts value “2” in r3
+pull $r3			#uses r3 value as mem addr to get mem[2]
+mov $r3		#gets the mem[2] byte and stores it in r3 “b”
+create #0x00 
+mov $r4 		#q0
+mov $r5 		#q1
+mov $r6 		#q2
+mov $r7 		#r0
+mov $r8 		#holds comparison
+create #0xE7		# -25
+mov $r9
+load $r0		#loop
+addc $r0		#refresh the carry_reg
+create #0x01 	
+addc $r4 		#adds 1 to q0
+load $r0
+addc $r5 		#adds carry to q1
+addc $r6 		#adds carry to q2
+load $r0
+addc $r0		#refresh carry_reg
+load $r3		
+subc $r7		#r0 - b
+create #0x00 			
+subc $r2 		#subs carry from r1
+subc $r1 		#subs carry from r2
+create #0x00 	
+gt $r2			#check if r2 >0
+mov $r8		#stores comparison result
+create #0x00
+gt $r1			#check if r1 >0
+add $r8		#accumulates comparison result
+mov $r8
+create #0xFF		#get -1 value
+add $r3		#get r3 - 1 value
+gt $r7			#check if r7 >= r3
+add $r8		#accumulates comparison result
+btr $r9			#branch if any gt yielded true(1)
+create #0x04 	
+store $r6		#stores int byte 2(mem[4])
+create #0x05	
+store $r5		#stores int byte 1(mem[5])
+create #0x06	
+store $r4		#stores frac(mem[6])
+halt 

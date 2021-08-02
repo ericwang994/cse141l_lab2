@@ -1,0 +1,277 @@
+load $r0
+mov $r5		#i
+mov $r1		#int2 / r2
+mov $r2		#int1 / r1
+mov $r7		#frac / r0
+create #0xEF		# -17
+mov $r9
+create #0x0C		# 12
+mov $r8
+pull $r0			#sum & get N
+mov $r3		    #put N in r3 for divide’s “b”
+load $r5
+sub $r3		    #acc = N - i
+beq $r8		    #branch when i incremented all the way to N
+load $r0
+addc $r0		#refreshing carry_reg
+create #0x01
+add $r5
+mov $r5		    #increment i 
+pull $r5		#get i-th number
+addc $r2		#add to int sum(r1)
+load $r0
+addc $r1		#add carry to int2 sum(r2)
+load $r5		#get i into acc
+btr $r9			#always branch since i>0 by now
+load $r0		#divide 
+mov $r4 		#q0
+mov $r5 		#q1
+mov $r6 		#q2
+mov $r8 		#holds comparison
+create #0xE7		# -25
+mov $r9
+load $r0		#loop
+addc $r0		#refresh the carry_reg
+create #0x01 	
+addc $r4 		#adds 1 to q0
+load $r0
+addc $r5 		#adds carry to q1
+addc $r6 		#adds carry to q2
+load $r0
+addc $r0		#refresh carry_reg
+load $r3		
+subc $r7		#r0 - b
+create #0x00 			
+subc $r2 		#subs carry from r1
+subc $r1 		#subs carry from r2
+create #0x00 	
+gt $r2			#check if r2 >0
+mov $r8		#stores comparison result
+create #0x00
+gt $r1			#check if r1 >0
+add $r8		#accumulates comparison result
+mov $r8
+create #0xFF		#get -1 value
+add $r3		#get r3 - 1 value
+gt $r7			#check if r7 >= r3
+add $r8		#accumulates comparison result
+btr $r9			#branch if any gt yielded true(1)
+create #0xFF		#mem[x_mean]
+store $r5		#stores into x_mean
+pull $r0
+mov $r5		#i starting at N
+load $r0
+mov $r1		#int2 / r2
+mov $r2		#int1 / r1
+mov $r7		#frac / r0
+create #0xEF		# -17
+mov $r9
+create #0x0C		# 12
+mov $r8
+pull $r0			#sum & get N                    HERE 9
+mov $r3		#put N in r3 for divide’s “b”
+sl $r0			#getting 2*N
+mov $r6		#storing 2*N
+load $r5
+sub $r6		#acc = 2*N - i
+beq $r8		#branch when i incremented all the way to N
+load $r0
+addc $r0		#refreshing carry_reg
+create #0x01
+add $r5
+mov $r5		#increment i 
+pull $r5			#get i-th number
+addc $r2		#add to int sum(r1)
+load $r0
+addc $r1		#add carry to int2 sum(r2)
+load $r5		#get i into acc
+btr $r9			#always branch since i>0 by now         HERE 9
+load $r0		#divide 
+mov $r4 		#q0
+mov $r5 		#q1
+mov $r6 		#q2
+mov $r8 		#holds comparison
+create #0xE7		# -25
+mov $r9
+load $r0		#loop                       #HERE  9
+addc $r0		#refresh the carry_reg
+create #0x01 	
+addc $r4 		#adds 1 to q0
+load $r0
+addc $r5 		#adds carry to q1
+addc $r6 		#adds carry to q2
+load $r0
+addc $r0		#refresh carry_reg
+load $r3		
+subc $r7		#r0 - b
+create #0x00 			
+subc $r2 		#subs carry from r1
+subc $r1 		#subs carry from r2
+create #0x00 	
+gt $r2			#check if r2 >0
+mov $r8		#stores comparison result
+create #0x00
+gt $r1			#check if r1 >0
+add $r8		#accumulates comparison result
+mov $r8
+create #0xFF		#get -1 value
+add $r3		#get r3 - 1 value
+gt $r7			#check if r7 >= r3
+add $r8		#accumulates comparison result
+btr $r9			#branch if any gt yielded true(1)     #HERE  9
+create #0xFD	
+store $r5		#stores into y_mean
+load $r0		#initializing i
+mov $r2	
+create #0xA4        # -92
+mov $r10                                                #HERE	10
+pull $r0			#summation_loop & get N
+mov $r3		#store in r3
+load $r2		#get i
+sub $r2		#get N - i
+create #0x5D        # 87
+mov $r9
+beq $r9   #check if i == N
+create #0x01		#incrementing i var
+add $r2
+mov $r2		#updating i
+load $r0		
+mov $r3		#storage for x_diff[2]
+mov $r4		#x_diff[1]
+mov $r5		#storage for y_diff[2]
+mov $r6		#y_diff[1]
+mov $r7		#product[2]
+mov $r8		#prod[1]
+create #0xFF		#difference
+mov $r4
+pull $r4			#pulling x_mean from memory into r4
+mov $r4		#storing x_mean in r4
+load $r0
+addc $r0		#reseting carry_reg
+pull $r2			#pulling x_i from memory into accumulator
+subc $r4		#gets x_difference1 into r4 
+load $r0
+subc $r3		#storing carry into r3		
+pull $r0			#get N
+add $r2		#adding N to i var to get y_i stored in r2
+mov $r2
+create #0xFD		
+mov $r6		
+pull $r6			#pulling y_mean from mem to r6
+mov $r6
+load $r0
+addc $r0		#refreshing carr_reg
+pull $r2			#pulling y_i from mem into acc
+subc $r6		#storing y_difference[1] into r6
+load $r0
+subc $r5		#y_diff[2] storing
+create #0xE0    # -32
+mov $r11
+fbit $r4			#multiply & checks if the first bit is a “1”                HERE  11
+beq else		#if first bit is “0”, skip the addition
+load $r0
+addc $r0		#refresh carry
+load $r6		#get y_diff[1] into acc
+addc $r8		#add to prod[1]
+load $r5		#get y_diff[2] into acc
+addc $r7		#add carry and y_diff[2] to prod[2]	
+load $r5		#else
+sl $r0
+lbit $r6
+add $r5
+mov $r5		#shifts r5 and keeps in track of overflow from r6
+load $r6
+sl $r0
+mov $r6		#shift r6 left
+load $r4
+sr $r0
+fbit $r3
+sl $r0
+sl $r0
+sl $r0
+sl $r0
+sl $r0
+sl $r0
+sl $r0
+add $r4		#shift r3 right and give the lost bit to r4 as msb
+mov $r4
+load $r3
+sr $r0
+mov $r3
+add $r4
+beq $r11		#keep branching until r4 is 0(all read)	            HERE  11
+load $r0		#sum
+addc $r0		#refreshing carry_reg
+create #0xF9		#memory addr for covar1 var
+mov $r4
+pull $r4			#getting covar1 value so far
+addc $r8		#adding prod[1]
+create #0xFA		#mem addr for covar2
+mov $r3
+pull $r3			#getting covar2 value so far
+addc $r7		#adding prod[2]
+create #0xF9
+store $r8		#storing sum1 back into memory
+create #0xFA
+store $r7		#storing sum2 back into mem
+pull $r0
+mov $r1
+load $r2
+sub $r1
+mov $r2
+beq $r10	#always branch since comparison is at top                       HERE  10
+create #0xFA		#summation_end
+mov $r1
+pull $r1		#get sum2 numerator
+mov $r1
+create #0xF9
+mov $r2
+pull $r2		#get sum1 for numerator
+mov $r2
+pull $r0	
+mov $r3	#get N for denominator
+create #0x00 
+mov $r4 		#q0
+mov $r5 		#q1
+mov $r7		#r0
+mov $r6 		#q2
+mov $r8 		#holds comparison
+create #0xE7		# -25
+mov $r9
+load $r0		#loop
+addc $r0		#refresh the carry_reg
+create #0x01 	
+addc $r4 		#adds 1 to q0
+load $r0
+addc $r5 		#adds carry to q1
+addc $r6 		#adds carry to q2
+load $r0
+addc $r0		#refresh carry_reg
+load $r3		
+subc $r7		#r0 - b
+create #0x00 			
+subc $r2 		#subs carry from r1
+subc $r1 		#subs carry from r2
+create #0x00 	
+gt $r2			#check if r2 >0
+mov $r8		#stores comparison result
+create #0x00
+gt $r1			#check if r1 >0
+add $r8		#accumulates comparison result
+mov $r8
+create #0xFF		#get -1 value
+add $r3		#get r3 - 1 value
+gt $r7			#check if r7 >= r3
+add $r8		#accumulates comparison result
+btr $r9			#branch if any gt yielded true(1)
+pull $r0
+sl $r0
+mov $r1
+create #0x01
+add $r1
+mov $r1
+store $r5		#stores int byte 1(mem[2*N+1])
+create #0x01
+add $r1	
+store $r4		#stores frac(mem[2*N+2])
+halt 
